@@ -2,20 +2,20 @@
 // Fix the error
 // Make it compile
 // Run test
+#[derive(Debug, PartialEq)]
 struct Person {
     name: String,
     age: u8,
-    hobby: String
+    hobby: String,
 }
 fn exercise1() -> Person {
     let age = 30;
-    // Hobby = Rust 
+    // Hobby = Rust
     let p = Person {
         name: String::from("sunface"),
         age,
-        hobby: String::from("Rust")
+        hobby: String::from("Rust"),
     };
-
     p
 }
 
@@ -25,7 +25,8 @@ fn exercise1() -> Person {
 // Run test
 
 // Define the struct
-struct Agent  {
+#[derive(Debug, PartialEq)]
+struct Agent {
     name: String,
     age: u32,
 }
@@ -33,18 +34,18 @@ struct Agent  {
 // Implementation of methods for the Person struct
 impl Agent {
     // Create a new Person instance
-    fn new(name: String, age: u32) -> Agent {
+    fn new(name: String, age: u32) -> Self {
         Agent { name, age }
     }
 
     // Get the name of the person
     fn get_name(&self) -> &str {
-        todo!()
+        &self.name
     }
 
     // Get the age of the person
     fn get_age(&self) -> u32 {
-        todo!()
+        self.age
     }
 }
 
@@ -52,6 +53,7 @@ impl Agent {
 // Fix the error
 // Make it compile
 // Run test
+#[derive(Debug, PartialEq)]
 struct Calculator {
     value: i32,
 }
@@ -61,25 +63,25 @@ impl Calculator {
         Calculator { value: 0 }
     }
 
-    fn add(&self, num: i32) {
+    fn add(&mut self, num: i32) {
         self.value += num;
     }
 
-    fn subtract(mut self, num: i32) {
+    fn subtract(&mut self, num: i32) {
         self.value -= num;
     }
-    fn clear(self) {
+    fn clear(&mut self) {
         self.value = 0;
     }
 
-    fn get_value(self) -> i32 {
+    fn get_value(&self) -> i32 {
         self.value
     }
 }
 
 // Exercise 4
 // Make it compile
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 struct User {
     first: String,
     last: String,
@@ -87,7 +89,7 @@ struct User {
 }
 
 fn exercise4() {
-    let u1 = User {
+    let mut u1 = User {
         first: String::from("John"),
         last: String::from("Doe"),
         age: 22,
@@ -95,16 +97,16 @@ fn exercise4() {
 
     let u2 = User {
         first: String::from("Mary"),
-        ..u1
-        
+        last: String::from(&u1.last),
+        age: u1.age,
     };
 
-    println!("user: {:#?}", u1);
-
+    println!("user: {:?}", u1);
 }
 
 // Exercise 5
 // Make it compile
+#[derive(Debug, PartialEq)]
 struct Foo {
     str_val: String,
     int_val: i32,
@@ -121,11 +123,9 @@ fn exercise5() {
         int_val: 20,
     });
 
-    
-    let moved = foos[0];
+    let moved = &foos[0];
 
-    
-    let moved_field = foos[0].str_val;
+    let moved_field = &foos[0];
 }
 
 // Exercise 6
@@ -133,7 +133,7 @@ fn exercise5() {
 // defined the Package struct and we want to test some logic attached to it.
 // Make the code compile and the tests pass!
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 struct Package {
     sender_country: String,
     recipient_country: String,
@@ -153,12 +153,16 @@ impl Package {
         }
     }
 
-    fn is_international(&self) -> ??? {
-        // Something goes here...
+    fn is_international(&self) -> bool {
+        if self.sender_country == self.recipient_country {
+            false
+        } else {
+            true
+        }
     }
 
-    fn get_fees(&self, cents_per_gram: i32) -> ??? {
-        // Something goes here...
+    fn get_fees(&mut self, cents_per_gram: i32) -> i32 {
+        self.weight_in_grams * cents_per_gram
     }
 }
 
@@ -174,10 +178,9 @@ mod tests {
         let p_expectation = Person {
             name: String::from("sunface"),
             age: 30,
-            hobby:String::from("Rust") 
+            hobby: String::from("Rust"),
         };
         assert_eq!(p, p_expectation);
-        
     }
 
     // Test for exercise 2
@@ -205,9 +208,7 @@ mod tests {
 
         calculator.clear();
         assert_eq!(calculator.get_value(), 0);
-
     }
-
 
     // Test for exercise 6
     #[test]
@@ -225,9 +226,9 @@ mod tests {
         let sender_country = String::from("Spain");
         let recipient_country = String::from("Russia");
 
-        let package = Package::new(sender_country, recipient_country, 1200);
+        let package = Package::new(sender_country.clone(), recipient_country.clone(), 1200);
 
-        assert!(package.is_international());
+        assert_eq!(package.is_international(), true);
     }
 
     // Test for exercise 6
@@ -238,7 +239,7 @@ mod tests {
 
         let package = Package::new(sender_country, recipient_country, 1200);
 
-        assert!(!package.is_international());
+        assert_eq!(!package.is_international(), true);
     }
     // Test for exercise 6
     #[test]
@@ -248,10 +249,9 @@ mod tests {
 
         let cents_per_gram = 3;
 
-        let package = Package::new(sender_country, recipient_country, 1500);
+        let mut package = Package::new(sender_country, recipient_country, 1500);
 
         assert_eq!(package.get_fees(cents_per_gram), 4500);
         assert_eq!(package.get_fees(cents_per_gram * 2), 9000);
     }
-
 }

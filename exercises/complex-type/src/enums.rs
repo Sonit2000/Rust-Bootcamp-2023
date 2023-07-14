@@ -1,6 +1,7 @@
 // Exercise 1
 // Fill in the blank and fix the errors
 // Make it compile
+#[derive(Debug, PartialEq)]
 enum MessageOne {
     Quit,
     Move { x: i32, y: i32 },
@@ -8,11 +9,11 @@ enum MessageOne {
     ChangeColor(i32, i32, i32),
 }
 fn show_message(msg: MessageOne) {
-    println!("{}", msg);
+    println!("{:?}", msg);
 }
 
 fn exercise1() {
-    let msgs: __ = [
+    let msgs = [
         MessageOne::Quit,
         MessageOne::Move { x: 1, y: 3 },
         MessageOne::ChangeColor(255, 255, 0),
@@ -29,6 +30,10 @@ fn exercise1() {
 // Run tests
 enum Message {
     // TODO: implement the message variant types based on their usage below
+    ChangeColor(u8, u8, u8),
+    Echo(String),
+    Move(Point),
+    Quit,
 }
 
 struct Point {
@@ -62,13 +67,20 @@ impl State {
     fn process(&mut self, message: Message) {
         // TODO: create a match expression to process the different message variants
         // Remember: When passing a tuple as a function argument, you'll need extra parentheses: fn function((t, u, p, l, e))
+        // TODO: call the appropriate method for each message variant
+        match message {
+            Message::ChangeColor(r, g, b) => self.change_color((r, g, b)),
+            Message::Echo(s) => self.echo(s),
+            Message::Move(p) => self.move_position(p),
+            Message::Quit => self.quit(),
+        }
     }
 }
-
 
 // Exercise 3
 // Fix the errors
 // Run tests
+#[derive(Debug, PartialEq)]
 enum Direction {
     North,
     East,
@@ -78,12 +90,14 @@ enum Direction {
 
 impl Direction {
     fn opposite(&self) -> Direction {
-        match self {
-            //TODO
+        match *self {
+            Direction::North => Direction::South,
+            Direction::East => Direction::West,
+            Direction::South => Direction::North,
+            Direction::West => Direction::East,
         }
     }
 }
-
 
 // Exercise 4
 // Implement logic :
@@ -99,10 +113,12 @@ enum Operation {
 // Perform arithmetic operations
 fn perform_operation(operation: Operation, num1: f64, num2: f64) -> f64 {
     match operation {
-        // TODO
+        Operation::Add => num1 + num2,
+        Operation::Subtract => num1 - num2,
+        Operation::Multiply => num1 * num2,
+        Operation::Divide => num1 / num2,
     }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -152,8 +168,5 @@ mod tests {
 
         let divide_result = perform_operation(Operation::Divide, 12.0, 3.0);
         assert_eq!(divide_result, 4.0);
-
     }
-
 }
-
