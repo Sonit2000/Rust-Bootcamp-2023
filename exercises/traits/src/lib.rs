@@ -72,7 +72,7 @@ impl Foo for String {
 }
 
 // IMPLEMENT below with generics and parameters
-fn static_dispatch<T: Foo>(x: T) {
+fn static_dispatch(x: impl Foo) {
     x.method();
 }
 
@@ -105,7 +105,7 @@ fn draw_with_box(x: Box<dyn Draw>) {
     x.draw();
 }
 
-fn draw_with_ref<T: Draw>(x: &T) {
+fn draw_with_ref(x: &dyn Draw) {
     x.draw();
 }
 
